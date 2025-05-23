@@ -20,6 +20,11 @@ namespace Repository.Class
             dbContext = _applicationDbContext;
         }
 
+        public Loan? GetloanById (int id)
+        {
+            return dbContext.Loan.AsNoTracking().FirstOrDefault(loan => loan.Id == id);
+        }
+
         public LoanDomain[] GetLoansByUser(int idUsuario)
         {
             return dbContext.Loan.AsNoTracking().Include(loan => loan.LoanStatus).Select(loan => new LoanDomain
@@ -53,6 +58,24 @@ namespace Repository.Class
             {
                 throw new Exception($"Ocurrió un error en el registro del prestamos, el error es el siguiente: {ex.Message}");
             }
+        }
+
+        public void ApproveLoan (int id)
+        {
+            Loan loanToApprove = dbContext.Loan.First(loan => loan.Id == id);
+
+            loanToApprove.LoanStatusId = 2;
+
+            dbContext.SaveChanges();
+        }
+
+        public void DisapproveLoan(int id)
+        {
+            Loan loanToApprove = dbContext.Loan.First(loan => loan.Id == id);
+
+            loanToApprove.LoanStatusId = 3;
+
+            dbContext.SaveChanges();
         }
     }
 }
